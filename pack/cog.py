@@ -76,7 +76,11 @@ class Pack(commands.GroupCog):
         if resource.uses >= 3:
             await resource.set_daily_cooldown()
         await interaction.response.defer()
-        balls = await Ball.filter(rarity__range=(pack_settings.min_rarity_daily, pack_settings.max_rarity_daily))
+        balls = await Ball.filter(
+            enabled=True,
+            tradeable=True,
+            rarity__range=(pack_settings.min_rarity_daily, pack_settings.max_rarity_daily)
+        )
         ball = await self._get_random_countryball(balls)
         instance = await BallInstance.create(
             player=player,
@@ -131,7 +135,11 @@ class Pack(commands.GroupCog):
         if resource.uses >= 3:
             await resource.set_weekly_cooldown()
         await interaction.response.defer()
-        balls = await Ball.filter(rarity__range=(pack_settings.min_rarity_weekly, pack_settings.max_rarity_weekly))
+        balls = await Ball.filter(
+            enabled=True,
+            tradeable=True,
+            rarity__range=(pack_settings.min_rarity_weekly, pack_settings.max_rarity_weekly)
+        )
         ball = await self._get_random_countryball(balls)
         instance = await BallInstance.create(
             player=player,

@@ -69,7 +69,7 @@ async def install_package_files():
 
     if os.path.isfile(f"{PACKAGE_PATH}/config.toml"):
         PACKAGE_FILES.pop(PACKAGE_FILES.index("config.toml"))
-        await ctx.send("`config.toml` file already found.")
+        await ctx.send("`config.toml` file already found. Skipping it.")
 
     for index, file in enumerate(PACKAGE_FILES):
         request = requests.get(f"https://api.github.com/repos/{GITHUB}/pack/{file}")
