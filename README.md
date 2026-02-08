@@ -2,7 +2,7 @@
 This package is a custom package that allows claiming a ball on a daily or weekly. 
 You can customize the rarity of balls in the `pack/config.toml` file
 
-[!NOTE]
+> [!NOTE]
 > This package is not compatible with BallsDex 3.X.
 
 # Installation
