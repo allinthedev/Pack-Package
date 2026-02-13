@@ -107,7 +107,7 @@ class Pack(commands.GroupCog):
         desc = f"📖 **Rarity:** {rarity}\n"
         if rarity in crews:
             crew = crews[rarity]
-            desc += f"👥 **Crew Rarity:** {crew["name"]} ({crew["rarity"]})\n"
+            desc += f"🏴‍☠️ **Crew Rarity:** {crew["name"]} ({crew["rarity"]})\n"
         if rarity in fruits:
             fruit = fruits[rarity]
             desc += f"🍎 **Fruit Rarity:** {fruit["name"]} ({fruit["rarity"]})\n"
@@ -118,7 +118,7 @@ class Pack(commands.GroupCog):
             weapon = weapons[rarity]
             desc += f"⚔️ **Weapon Rarity:** {weapon["name"]} ({weapon["rarity"]})\n"
         desc += (
-            f"\n❤️ **Health:** {ball.health}\n"
+            f"❤️ **Health:** {ball.health}\n"
             f"⚔️ **Attack:** {ball.attack}\n"
         )
         embed.description = desc
@@ -180,7 +180,7 @@ class Pack(commands.GroupCog):
         desc = f"📖 **Rarity:** {rarity}\n"
         if rarity in crews:
             crew = crews[rarity]
-            desc += f"👥 **Crew Rarity:** {crew["name"]} ({crew["rarity"]})\n"
+            desc += f"🏴‍☠️ **Crew Rarity:** {crew["name"]} ({crew["rarity"]})\n"
         if rarity in fruits:
             fruit = fruits[rarity]
             desc += f"🍎 **Fruit Rarity:** {fruit["name"]} ({fruit["rarity"]})\n"
@@ -191,7 +191,7 @@ class Pack(commands.GroupCog):
             weapon = weapons[rarity]
             desc += f"⚔️ **Weapon Rarity:** {weapon["name"]} ({weapon["rarity"]})\n"
         desc += (
-            f"\n❤️ **Health:** {ball.health}\n"
+            f"❤️ **Health:** {ball.health}\n"
             f"⚔️ **Attack:** {ball.attack}\n"
         )
         embed.description = desc
