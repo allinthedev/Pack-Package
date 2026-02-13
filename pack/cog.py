@@ -52,7 +52,7 @@ def load_rarity_json(path: Path):
 crews = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./crew.json"))
 fruits = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./rarity_fruits.json"))
 ships = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./ships.json"))
-weapons = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./weapons.json"))
+weapons = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./weapons_rarity.json"))
 
 class Pack(commands.GroupCog):
     """
