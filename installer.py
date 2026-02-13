@@ -6,7 +6,15 @@ import requests
 
 GITHUB = "Valen7440/Pack-Package/contents/"
 PACKAGE_PATH = "ballsdex/packages/pack"
-PACKAGE_FILES = ["__init__.py", "cog.py", "config.toml"]
+PACKAGE_FILES = [
+    "__init__.py", 
+    "cog.py", 
+    "config.toml",
+    "crew.json",
+    "rarity_fruits.json",
+    "ships.json",
+    "weapons.json"
+]
 TORTOISE_MODELS = ["pack_models.py"]
 DJANGO_APP_FILES = [
     "__init__.py", 
