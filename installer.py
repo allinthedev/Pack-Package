@@ -13,7 +13,7 @@ PACKAGE_FILES = [
     "crew.json",
     "rarity_fruits.json",
     "ships.json",
-    "weapons.json"
+    "weapons_rarity.json"
 ]
 TORTOISE_MODELS = ["pack_models.py"]
 DJANGO_APP_FILES = [
