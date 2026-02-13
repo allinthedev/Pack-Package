@@ -1,0 +1,132 @@
+{
+  "rarities": [
+    {
+      "name": "Yoru",
+      "rarity": 1
+    },
+    {
+      "name": "Ragnir",
+      "rarity": 1
+    },
+    {
+      "name": "Shusui",
+      "rarity": 4
+    },
+    {
+      "name": "Ace",
+      "rarity": 5
+    },
+    {
+      "name": "Murakumogiri",
+      "rarity": 5
+    },
+    {
+      "name": "Gryphon",
+      "rarity": 7
+    },
+    {
+      "name": "Wado Ichimonji",
+      "rarity": 7
+    },
+    {
+      "name": "Enma",
+      "rarity": 9
+    },
+    {
+      "name": "Shodai Kitetsu",
+      "rarity": 10
+    },
+    {
+      "name": "Yakuza Kasen",
+      "rarity": 12
+    },
+    {
+      "name": "Ame no Habakiri",
+      "rarity": 15
+    },
+    {
+      "name": "Sandai Kitetsu",
+      "rarity": 15
+    },
+    {
+      "name": "Raiu",
+      "rarity": 18
+    },
+    {
+      "name": "Nidai Kitetsu",
+      "rarity": 20
+    },
+    {
+      "name": "Kaken",
+      "rarity": 25
+    },
+    {
+      "name": "Kikoku",
+      "rarity": 25
+    },
+    {
+      "name": "Oto and Kogarashi",
+      "rarity": 27
+    },
+    {
+      "name": "Napoleon",
+      "rarity": 30
+    },
+    {
+      "name": "Shiguren",
+      "rarity": 31
+    },
+    {
+      "name": "Durandal",
+      "rarity": 35
+    },
+    {
+      "name": "Soul Solid",
+      "rarity": 35
+    },
+    {
+      "name": "Yubashiri",
+      "rarity": 35
+    },
+    {
+      "name": "Warabide",
+      "rarity": 37
+    },
+    {
+      "name": "Shirauo",
+      "rarity": 39
+    },
+    {
+      "name": "Eisen Whip",
+      "rarity": 41
+    },
+    {
+      "name": "Funkfreed",
+      "rarity": 42
+    },
+    {
+      "name": "Kiribachi",
+      "rarity": 42
+    },
+    {
+      "name": "Cat Claws",
+      "rarity": 44
+    },
+    {
+      "name": "Kashu",
+      "rarity": 45
+    },
+    {
+      "name": "Same-Kiri",
+      "rarity": 45
+    },
+    {
+      "name": "Terry-Sword",
+      "rarity": 47
+    },
+    {
+      "name": "Clima Tact",
+      "rarity": 120
+    }
+  ]
+}
