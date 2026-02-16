@@ -9,11 +9,9 @@ PACKAGE_PATH = "ballsdex/packages/pack"
 PACKAGE_FILES = [
     "__init__.py", 
     "cog.py", 
+    "item_types.py",
     "config.toml",
-    "crew.json",
-    "rarity_fruits.json",
-    "ships.json",
-    "weapons_rarity.json"
+    "items.json"
 ]
 TORTOISE_MODELS = ["pack_models.py"]
 DJANGO_APP_FILES = [
