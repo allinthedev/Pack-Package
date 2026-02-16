@@ -2,12 +2,12 @@
 # Inclusive rarity range (min ≤ rarity ≤ max)
 # Both values are inclusive.
 
-min_rarity_daily = 1.0
-max_rarity_daily = 1.0
+min_rarity_daily = 62.0
+max_rarity_daily = 335.0
 
 [weekly]
 # Inclusive rarity range (min ≤ rarity ≤ max)
 # Both values are inclusive.
 
 min_rarity_weekly = 1.0
-max_rarity_weekly = 1.0
+max_rarity_weekly = 62.0
