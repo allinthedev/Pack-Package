@@ -16,6 +16,8 @@ from ballsdex.core.models import Ball, BallInstance, Player
 from ballsdex.core.pack_models import PackResource
 from ballsdex.settings import settings
 
+from .item_types import Item, ItemType
+
 if TYPE_CHECKING:
     from ballsdex.core.bot import BallsDexBot
 
@@ -41,18 +43,15 @@ class PackageSettings:
 
 pack_settings = PackageSettings(Path(os.path.dirname(os.path.abspath(__file__)), "./config.toml"))
 
-def load_rarity_json(path: Path):
+def load_rarity_json(path: Path) -> list[Item]:
     with open(path, "r", encoding="utf-8") as f:
         try:
             data = json.load(f)["rarities"]
         except KeyError:
             raise ValueError("Invalid rarity JSON format: 'rarities' key not found.")
-    return {float(x["rarity"]): x for x in data}
+    return data
 
-crews = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./crew.json"))
-fruits = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./rarity_fruits.json"))
-ships = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./ships.json"))
-weapons = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./weapons_rarity.json"))
+items = load_rarity_json(Path(os.path.dirname(os.path.abspath(__file__)), "./items.json"))
 
 class Pack(commands.GroupCog):
     """
@@ -105,18 +104,16 @@ class Pack(commands.GroupCog):
         )
         embed = discord.Embed(title=f"🎁 You got {ball.country}!", color=discord.Color.gold())
         desc = f"📖 **Rarity:** {rarity}\n"
-        if rarity in crews:
-            crew = crews[rarity]
-            desc += f"🏴‍☠️ **Crew Rarity:** {crew["name"]} ({crew["rarity"]})\n"
-        if rarity in fruits:
-            fruit = fruits[rarity]
-            desc += f"🍎 **Fruit Rarity:** {fruit["name"]} ({fruit["rarity"]})\n"
-        if rarity in ships:
-            ship = ships[rarity]
-            desc += f"🚢 **Ship Rarity:** {ship["name"]} ({ship["rarity"]})\n"
-        if rarity in weapons:
-            weapon = weapons[rarity]
-            desc += f"⚔️ **Weapon Rarity:** {weapon["name"]} ({weapon["rarity"]})\n"
+        rarities = [x for x in items if x["name"] == ball.country]
+        for item in rarities:
+            if item["type"] == ItemType.Crew:
+                desc +=  f"🏴‍☠️ **Crew Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Fruit:
+                desc += f"🍎 **Fruit Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Ship:
+                desc += f"🚢 **Ship Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Weapon:
+                desc += f"⚔️ **Weapon Rarity:** {item["rarity"]}\n"
         desc += (
             f"❤️ **Health:** {ball.health}\n"
             f"⚔️ **Attack:** {ball.attack}\n"
@@ -178,18 +175,16 @@ class Pack(commands.GroupCog):
         )
         embed = discord.Embed(title=f"🎁 You got {ball.country}!", color=discord.Color.gold())
         desc = f"📖 **Rarity:** {rarity}\n"
-        if rarity in crews:
-            crew = crews[rarity]
-            desc += f"🏴‍☠️ **Crew Rarity:** {crew["name"]} ({crew["rarity"]})\n"
-        if rarity in fruits:
-            fruit = fruits[rarity]
-            desc += f"🍎 **Fruit Rarity:** {fruit["name"]} ({fruit["rarity"]})\n"
-        if rarity in ships:
-            ship = ships[rarity]
-            desc += f"🚢 **Ship Rarity:** {ship["name"]} ({ship["rarity"]})\n"
-        if rarity in weapons:
-            weapon = weapons[rarity]
-            desc += f"⚔️ **Weapon Rarity:** {weapon["name"]} ({weapon["rarity"]})\n"
+        rarities = [x for x in items if x["name"] == ball.country]
+        for item in rarities:
+            if item["type"] == ItemType.Crew:
+                desc +=  f"🏴‍☠️ **Crew Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Fruit:
+                desc += f"🍎 **Fruit Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Ship:
+                desc += f"🚢 **Ship Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Weapon:
+                desc += f"⚔️ **Weapon Rarity:** {item["rarity"]}\n"
         desc += (
             f"❤️ **Health:** {ball.health}\n"
             f"⚔️ **Attack:** {ball.attack}\n"
