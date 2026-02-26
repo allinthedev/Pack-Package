@@ -14,9 +14,12 @@ from discord.utils import format_dt
 
 from ballsdex.core.models import Ball, BallInstance, Player
 from ballsdex.core.pack_models import PackResource
+from ballsdex.core.currency_models import Item as ItemModel, MoneyInstance
+from ballsdex.packages.admin.cog import FieldPageSource, Pages
 from ballsdex.settings import settings
 
 from .item_types import Item, ItemType
+from .transformers import ItemTransform
 
 if TYPE_CHECKING:
     from ballsdex.core.bot import BallsDexBot
@@ -197,6 +200,138 @@ class Pack(commands.GroupCog):
         file = discord.File(buffer, "card.webp")
         embed.set_image(url="attachment://card.webp")
         await interaction.followup.send(embed=embed, file=file)
+
+    @app_commands.command()
+    async def shop(self, interaction: discord.Interaction["BallsDexBot"]):
+        """
+        Check available packs in the shop.
+        """
+        await interaction.response.defer(thinking=True)
+        packs = await ItemModel.all().order_by("prize").prefetch_related("special")
+        
+        entries: list[tuple[str, str]] = []
+        for pack in packs:
+            if pack.emoji_id:
+                emoji = str(self.bot.get_emoji(pack.emoji_id))
+            else:
+                emoji = ""
+            
+            description = (
+                f"Price: **{pack.prize:,}**\n"
+                f"Minimum Rarity: **{pack.minimum_rarity}**\n"
+                f"Maximum Rarity: **{pack.maximum_rarity}**\n"
+                f"Special: **{pack.special.name if pack.special else 'Any'}**\n"
+            )
+            
+            entries.append(
+                (
+                    f"{emoji} {pack.name}",
+                    description
+                )
+            )
+        
+        source = FieldPageSource(entries, per_page=5)
+        source.embed.title = "Available Packs"
+
+        pages = Pages(source, interaction=interaction, compact=True)
+        await pages.start()
+    
+    @app_commands.command()
+    async def buy(
+        self, interaction: discord.Interaction["BallsDexBot"], pack: ItemTransform
+    ):
+        """
+        Buy a pack.
+
+        Parameters
+        ----------
+        pack: Item
+            The item to buy.
+        """
+        await interaction.response.defer(thinking=True, ephemeral=True)
+        player, _ = await Player.get_or_create(discord_id=interaction.user.id)
+        instance, _ = await MoneyInstance.get_or_create(player=player)
+        if instance.amount < pack.prize:
+            if pack.emoji_id:
+                emoji = self.bot.get_emoji(pack.emoji_id)
+            else:
+                emoji = ""
+            await interaction.followup.send(
+                f"You don't enough money to buy **{emoji} {pack.name}**\n"
+                f"Your actual balance: **{instance.amount:,}**"
+            )
+            return
+        
+        instance.amount -= pack.prize
+        await instance.save(update_fields=("amount",))
+
+        balls = await Ball.filter(
+            enabled=True,
+            tradeable=True,
+            rarity__range=(pack.minimum_rarity, pack.maximum_rarity)
+        )
+        ball = await self._get_random_countryball(balls)
+        rarity = ball.rarity
+        instance = await BallInstance.create(
+            player=player,
+            ball=ball,
+            health_bonus=random.randint(-settings.max_health_bonus, settings.max_health_bonus),
+            attack_bonus=random.randint(-settings.max_attack_bonus, settings.max_attack_bonus),
+        )
+        embed = discord.Embed(title=f"🎁 You got {ball.country}!", color=discord.Color.gold())
+        desc = f"📖 **Rarity:** {rarity}\n"
+        rarities = [x for x in items if x["name"] == ball.country]
+        for item in rarities:
+            if item["type"] == ItemType.Crew:
+                desc +=  f"🏴‍☠️ **Crew Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Fruit:
+                desc += f"🍎 **Fruit Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Ship:
+                desc += f"🚢 **Ship Rarity:** {item["rarity"]}\n"
+            elif item["type"] == ItemType.Weapon:
+                desc += f"⚔️ **Weapon Rarity:** {item["rarity"]}\n"
+        desc += (
+            f"❤️ **Health:** {ball.health}\n"
+            f"⚔️ **Attack:** {ball.attack}\n"
+        )
+        embed.description = desc
+        embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.display_avatar.url)
+        with ThreadPoolExecutor() as pool:
+            buffer = await interaction.client.loop.run_in_executor(pool, instance.draw_card)
+        file = discord.File(buffer, "card.webp")
+        embed.set_image(url="attachment://card.webp")
+        await interaction.followup.send(embed=embed, file=file)
+
+    @app_commands.command()
+    @app_commands.checks.cooldown(1, 86400, key=lambda i: i.user.id)
+    async def coin_daily(self, interaction: discord.Interaction["BallsDexBot"]):
+        """
+        Claim your daily payment.
+        """
+        await interaction.response.defer(thinking=True, ephemeral=True)
+        player, _ = await Player.get_or_create(discord_id=interaction.user.id)
+        instance, _ = await MoneyInstance.get_or_create(player=player)
+
+        instance.amount += 1500
+        await instance.save(update_fields=("amount",))
+
+        await interaction.followup.send(
+            f"You've claimed **1,500** coins! Now you have **{instance.amount:,}**. "
+            "Come back tomorrow!"
+        )
+    
+    @app_commands.command()
+    async def coin_balance(self, interaction: discord.Interaction["BallsDexBot"]):
+        """
+        Check your actual coin balance.
+        """
+        await interaction.response.defer(thinking=True, ephemeral=True)
+        player, _ = await Player.get_or_create(discord_id=interaction.user.id)
+        instance, _ = await MoneyInstance.get_or_create(player=player)
+
+        await interaction.followup.send(f"You have **{instance.amount:,}** coins.")
+        return
+
 
     async def _get_random_countryball(self, countryballs: list[Ball]) -> Ball:
         if not countryballs:
