@@ -9,7 +9,7 @@ from ballsdex import __version__
 
 SUPPORTED_VERSION_AT = "2.29.5"
 
-if parse_version(__version__) <= parse_version(SUPPORTED_VERSION_AT):
+if parse_version(__version__) < parse_version(SUPPORTED_VERSION_AT):
     raise Exception(
         f"Unsupported ballsdex version (Actual Version: {__version__}) "
         f"Version > 2.29.5 is required."
