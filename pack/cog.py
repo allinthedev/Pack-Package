@@ -224,7 +224,7 @@ class Pack(commands.GroupCog):
         
             if pack.description:
                 description = (
-                    f"{pack.description}\n"
+                    f"{pack.description}\n\n"
                     f"Price: **{pack.prize:,}**\n"
                     f"Minimum Rarity: **{pack.minimum_rarity}**\n"
                     f"Maximum Rarity: **{pack.maximum_rarity}**\n"
@@ -264,6 +264,7 @@ class Pack(commands.GroupCog):
             The item to buy.
         """
         await interaction.response.defer(thinking=True, ephemeral=True)
+        await pack.fetch_related("special")
         player, _ = await Player.get_or_create(discord_id=interaction.user.id)
         instance, _ = await MoneyInstance.get_or_create(player=player)
         if instance.amount < pack.prize:
@@ -307,6 +308,8 @@ class Pack(commands.GroupCog):
                 desc += f"🚢 **Ship Rarity:** {item["rarity"]}\n"
             elif item["type"] == ItemType.Weapon:
                 desc += f"⚔️ **Weapon Rarity:** {item["rarity"]}\n"
+        if special:
+            desc += f"⚡ **Special:** {special.name}"
         desc += (
             f"❤️ **Health:** {ball.health}\n"
             f"⚔️ **Attack:** {ball.attack}\n"
