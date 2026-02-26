@@ -16,7 +16,7 @@ from tortoise.timezone import now as tortoise_now
 
 from ballsdex.core.models import Ball, BallInstance, Special, Player, specials
 from ballsdex.core.pack_models import PackResource
-from ballsdex.core.currency_models import Item as ItemModel, MoneyInstance
+from ballsdex.core.currency_models import CurrencySettings, Item as ItemModel, MoneyInstance
 from ballsdex.packages.admin.cog import FieldPageSource, Pages
 from ballsdex.settings import settings
 
@@ -209,6 +209,12 @@ class Pack(commands.GroupCog):
         Check available packs in the shop.
         """
         await interaction.response.defer(thinking=True)
+        currency_settings = await CurrencySettings.load()
+        currency_emoji = (
+            self.bot.get_emoji(currency_settings.emoji_id) 
+            if currency_settings.emoji_id 
+            else ""
+        )
         packs = await ItemModel.all().order_by("prize").prefetch_related("special")
 
         if not packs:
@@ -225,14 +231,14 @@ class Pack(commands.GroupCog):
             if pack.description:
                 description = (
                     f"{pack.description}\n\n"
-                    f"Price: **{pack.prize:,}**\n"
+                    f"Price: **{currency_emoji} {pack.prize:,} {currency_settings.display_name(pack.prize)}**\n"
                     f"Minimum Rarity: **{pack.minimum_rarity}**\n"
                     f"Maximum Rarity: **{pack.maximum_rarity}**\n"
                     f"Special: **{pack.special.name if pack.special else 'Any'}**\n"
                 )
             else:
                 description = (
-                    f"Price: **{pack.prize:,}**\n"
+                    f"Price: **{currency_emoji} {pack.prize:,} {currency_settings.display_name(pack.prize)}**\n"
                     f"Minimum Rarity: **{pack.minimum_rarity}**\n"
                     f"Maximum Rarity: **{pack.maximum_rarity}**\n"
                     f"Special: **{pack.special.name if pack.special else 'Any'}**\n"
@@ -264,17 +270,22 @@ class Pack(commands.GroupCog):
             The item to buy.
         """
         await interaction.response.defer(thinking=True, ephemeral=True)
+        currency_settings = await CurrencySettings.load()
         await pack.fetch_related("special")
         player, _ = await Player.get_or_create(discord_id=interaction.user.id)
         instance, _ = await MoneyInstance.get_or_create(player=player)
         if instance.amount < pack.prize:
-            if pack.emoji_id:
-                emoji = self.bot.get_emoji(pack.emoji_id)
-            else:
-                emoji = ""
+            emoji = self.bot.get_emoji(pack.emoji_id) if pack.emoji_id else ""
+            currency_emoji = (
+                self.bot.get_emoji(currency_settings.emoji_id) 
+                if currency_settings.emoji_id 
+                else ""
+            )
             await interaction.followup.send(
-                f"You don't enough money to buy **{emoji} {pack.name}**\n"
-                f"Your actual balance: **{instance.amount:,}**"
+                f"You don't enough {currency_emoji} {currency_settings.name} to buy "
+                f"**{emoji} {pack.name}**\n"
+                f"Your actual balance: "
+                f"**{currency_emoji} {instance.amount:,} {currency_settings.display_name(instance.amount)}**"
             )
             return
         
@@ -329,6 +340,12 @@ class Pack(commands.GroupCog):
         Claim your daily payment.
         """
         await interaction.response.defer(thinking=True, ephemeral=True)
+        currency_settings = await CurrencySettings.load()
+        currency_emoji = (
+            self.bot.get_emoji(currency_settings.emoji_id) 
+            if currency_settings.emoji_id 
+            else ""
+        )
         player, _ = await Player.get_or_create(discord_id=interaction.user.id)
         instance, _ = await MoneyInstance.get_or_create(player=player)
 
@@ -336,8 +353,9 @@ class Pack(commands.GroupCog):
         await instance.save(update_fields=("amount",))
 
         await interaction.followup.send(
-            f"You've claimed **1,500** coins! Now you have **{instance.amount:,}**. "
-            "Come back tomorrow!"
+            "You've claimed  "
+            f"**{currency_emoji} 1,500 {currency_settings.display_name(1500)}**! "
+            f"Now you have **{instance.amount:,}**. Come back tomorrow!"
         )
     
     @app_commands.command()
@@ -346,10 +364,19 @@ class Pack(commands.GroupCog):
         Check your actual coin balance.
         """
         await interaction.response.defer(thinking=True, ephemeral=True)
+        currency_settings = await CurrencySettings.load()
+        currency_emoji = (
+            self.bot.get_emoji(currency_settings.emoji_id) 
+            if currency_settings.emoji_id 
+            else ""
+        )
         player, _ = await Player.get_or_create(discord_id=interaction.user.id)
         instance, _ = await MoneyInstance.get_or_create(player=player)
 
-        await interaction.followup.send(f"You have **{instance.amount:,}** coins.")
+        await interaction.followup.send(
+            "You have "
+            f"**{currency_emoji} {instance.amount:,} {currency_settings.display_name(instance.amount)}**"
+        )
         return
 
 

@@ -20,6 +20,28 @@ class Item(models.Model):
     def __str__(self) -> str:
         return self.name
 
+class CurrencySettings(models.Model):
+    name = fields.CharField(max_length=64)
+    plural_name = fields.CharField(max_length=64)
+    emoji_id = fields.BigIntField(description="Emoji id of the currency", null=True)
+
+    @classmethod
+    async def load(cls):
+        obj, _ = await cls.get_or_create(
+            pk=1,
+            defaults={
+                "name": "Coin",
+                "plural_name": "Coins",
+            }
+        )
+        return obj
+
+    def display_name(self, amount: int) -> str:
+        return self.name if amount == 1 else self.plural_name
+
+    def __str__(self) -> str:
+        return self.name
+
 class MoneyInstance(models.Model):
     player: fields.OneToOneRelation[Player] = fields.OneToOneField(
         "models.Player",

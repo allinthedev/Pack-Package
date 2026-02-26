@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.http import HttpRequest
 
-from .models import Item, MoneyInstance
+from .models import CurrencySettings, Item, MoneyInstance
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
@@ -16,6 +17,14 @@ class ItemAdmin(admin.ModelAdmin):
     ordering = ["-created_at"]
 
     search_fields = ("name",)
+
+@admin.register(CurrencySettings)
+class CurrencySettingsAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        return super().has_add_permission(request) and CurrencySettings.objects.first() is None
+    
+    def has_delete_permission(self, request: HttpRequest, obj: CurrencySettings | None = None) -> bool:
+        return False
 
 @admin.register(MoneyInstance)
 class MoneyInstanceAdmin(admin.ModelAdmin):

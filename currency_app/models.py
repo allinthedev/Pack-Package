@@ -2,6 +2,18 @@ from django.db import models
 
 from bd_models.models import Player, Special
 
+class CurrencySettings(models.Model):
+    name = models.CharField(max_length=64)
+    plural_name = models.CharField(max_length=64)
+    emoji_id = models.BigIntegerField(help_text="Emoji id of the currency", null=True, blank=True)
+
+    class Meta:
+        managed = True
+        db_table = "currencysettings"
+    
+    def __str__(self) -> str:
+        return self.name
+
 class Item(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(
